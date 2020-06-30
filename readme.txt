@@ -23,7 +23,7 @@ RESUME:		0x14 resume playback
 VOL:		0x15 set cdda volume
  arguments:	volume 0-255
 
--------------------------------------------- using
+-------------------------------------------- usage
 Include msu-drv.bin in your binary and call it as function for initialization. 
 Finction will return 0 if driver loaded succesfuly or 1 if MCD hardware not detected.
 Driver ready for commands processing  when 0xA12020 sets to 0
