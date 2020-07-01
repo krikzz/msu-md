@@ -2,7 +2,7 @@
 MegaCD driver for msu-like interfacing with CD hardware
 
 -------------------------------------------- control registers
-xA12010 	command
+0xA12010 	command
 0xA12011	argument
 0xA1201F	command clock. increment it for command execution
 0xA12020	mcd status. 0-ready, 1-init, 2-cmd busy
