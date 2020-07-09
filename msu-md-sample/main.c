@@ -44,7 +44,7 @@ int main() {
         gSetXY(0, 6);
         gConsPrint("track: ");
         gAppendNum(track);
-        gAppendString("");
+        gAppendString(" ");
         gConsPrint("loop:  ");
         gAppendString(loop ? "ON " : "OFF");
 

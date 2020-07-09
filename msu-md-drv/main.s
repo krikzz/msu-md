@@ -8,6 +8,7 @@
 .set ctrl_rst, 0x01
 .set ctrl_brq, 0x02
 
+
 start:
 *reset mc
     move.w  #1, %d0             /*1 in d0 if error*/

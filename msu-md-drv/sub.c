@@ -184,6 +184,8 @@ void cddCmdParse(u8 cmd, u32 arg) {//prepare cdd cmd and calc checksum
     u8 *ptr8 = (u8 *) & cdd_cmd;
 
     cdd_cmd.cmd = cmd;
+    cdd_cmd.u0 = 0;
+    cdd_cmd.u1 = 0;
     cdd_cmd.arg[0] = (arg >> 20) & 15;
     cdd_cmd.arg[1] = (arg >> 16) & 15;
     cdd_cmd.arg[2] = (arg >> 12) & 15;
