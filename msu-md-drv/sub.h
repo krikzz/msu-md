@@ -47,12 +47,12 @@
 
 #define SUB_STAT        0x00
 
-#define MAIN_CMD_PLAY   0x11    //paly and stop int the end
-#define MAIN_CMD_PLAYLP 0x12    //paly and loop
+#define MAIN_CMD_PLAY   0x11    //play and stop at the end of the track
+#define MAIN_CMD_PLAYLP 0x12    //play and loop from the start of the track
 #define MAIN_CMD_PAUSE  0x13    //pause
 #define MAIN_CMD_RESUME 0x14    //resume
 #define MAIN_CMD_VOL    0x15    //cdda volume
-
+#define MAIN_CMD_PLAYOF 0x1A    //play and loop from offset
 
 #define SUB_STAT_READY  0x00
 #define SUB_STAT_INIT   0x01
@@ -102,6 +102,7 @@ typedef struct {
     vu8 irq_ctr;
     u8 track;
     u8 loop_mode;
+    u32 loop_offset;
 } McdState;
 
 typedef struct {

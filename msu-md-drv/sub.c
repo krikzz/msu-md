@@ -60,6 +60,15 @@ void msu_drv() {
                 cddCmdExec(CDD_CMD_PLAY, toc.track_addr[mstate.track]);
                 mcd->CD_FADER = mstate.vol;
                 mstate.loop_mode = cmd;
+                mstate.loop_offset = 0; // loop from track start by default
+                break;
+
+            case MAIN_CMD_PLAYOF:
+                mstate.track = mcd->CMD_MAIN[MAIN_ARG] - 1;
+                cddCmdExec(CDD_CMD_PLAY, toc.track_addr[mstate.track]);
+                mcd->CD_FADER = mstate.vol;
+                mstate.loop_mode = MAIN_CMD_PLAYLP; // forced loop
+                mstate.loop_offset = *(vu32 *)(&mcd->CMD_MAIN[MAIN_ARG+1]);
                 break;
 
             case MAIN_CMD_PAUSE:
@@ -273,7 +282,7 @@ void loopCtrl() {
     if (cur_addr >= track_end && cdd_cmd.cmd == CDD_CMD_NOP) {
 
         if (mstate.loop_mode == MAIN_CMD_PLAYLP) {
-            cddCmdExec(CDD_CMD_PLAY, toc.track_addr[mstate.track]);
+            cddCmdExec(CDD_CMD_PLAY, toc.track_addr[mstate.track] + mstate.loop_offset);
         } else {
             cddCmdExec(CDD_CMD_PAUSE, 0);
         }
