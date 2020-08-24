@@ -12,7 +12,7 @@ PLAY:		0x11 playback will be stopped in the end of track
  arguments:	decimal number of track (1-99)
 
 PLAYLP:		0x12 paly looped cdda track. 
- arguments:	no
+ arguments:	decimal number of track (1-99)
 
 PAUSE:		0x13 pause playback
  arguments:	volume fading time. 1/75 of sec (75 equal to 1 sec) instant stop if 0
