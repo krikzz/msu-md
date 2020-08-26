@@ -60,16 +60,26 @@ void msu_drv() {
                 cddCmdExec(CDD_CMD_PLAY, toc.track_addr[mstate.track]);
                 mcd->CD_FADER = mstate.vol;
                 mstate.loop_mode = cmd;
-                mstate.loop_offset = 0; // loop from track start by default
+                mstate.loop_offset = toc.track_addr[mstate.track]; // loop from track start address by default
                 break;
 
             case MAIN_CMD_PLAYOF:
+            {
+                u8 minutes, seconds, blocks;
+                u32 offset = *(vu32 *)(&mcd->CMD_MAIN[MAIN_ARG+1]); // loop offset in sectors
                 mstate.track = mcd->CMD_MAIN[MAIN_ARG] - 1;
                 cddCmdExec(CDD_CMD_PLAY, toc.track_addr[mstate.track]);
                 mcd->CD_FADER = mstate.vol;
                 mstate.loop_mode = MAIN_CMD_PLAYLP; // forced loop
-                mstate.loop_offset = *(vu32 *)(&mcd->CMD_MAIN[MAIN_ARG+1]);
+                offset += msfToDec((toc.track_addr[mstate.track] >>16) & 0xff) * 60 * 75;
+                offset += msfToDec((toc.track_addr[mstate.track] >> 8) & 0xff) * 75;
+                offset += msfToDec((toc.track_addr[mstate.track] >> 0) & 0xff);
+                minutes = (offset / 75) / 60;
+                seconds = (offset / 75) % 60;
+                blocks = offset % 75;
+                mstate.loop_offset = ((minutes / 10) << 20) + ((minutes % 10) << 16) + ((seconds / 10) << 12) + ((seconds % 10) << 8) + ((blocks / 10) << 4) + (blocks % 10);
                 break;
+            }
 
             case MAIN_CMD_PAUSE:
                 fade(mcd->CMD_MAIN[MAIN_ARG]);
@@ -282,7 +292,7 @@ void loopCtrl() {
     if (cur_addr >= track_end && cdd_cmd.cmd == CDD_CMD_NOP) {
 
         if (mstate.loop_mode == MAIN_CMD_PLAYLP) {
-            cddCmdExec(CDD_CMD_PLAY, toc.track_addr[mstate.track] + mstate.loop_offset);
+            cddCmdExec(CDD_CMD_PLAY, mstate.loop_offset);
         } else {
             cddCmdExec(CDD_CMD_PAUSE, 0);
         }
