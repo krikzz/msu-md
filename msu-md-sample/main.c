@@ -5,6 +5,7 @@
 u16 msu_drv();
 
 vu16 *mcd_cmd = (vu16 *) 0xA12010;
+vu32 *mcd_arg = (vu32 *) 0xA12012;
 vu8 *mcd_cmd_ck = (vu8 *) 0xA1201F;
 vu8 *mcd_stat = (vu8 *) 0xA12020;
 
@@ -14,6 +15,7 @@ int main() {
     u8 track = 1;
     u16 play_cmd;
     u16 resp;
+    u32 offset = 0;
 
     sysInit();
     gSetColor(0x00, 0x000);
@@ -42,19 +44,22 @@ int main() {
     while (1) {
 
         gSetXY(0, 6);
-        gConsPrint("track: ");
+        gConsPrint("track:  ");
         gAppendNum(track);
         gAppendString(" ");
-        gConsPrint("loop:  ");
+        gConsPrint("loop:   ");
         gAppendString(loop ? "ON " : "OFF");
+        gAppendString(" ");
+        gConsPrint("offset: ");
+        gAppendNum(offset);
+        gAppendString(" blocks   ");
 
         gSetXY(0, G_SCREEN_H - 5);
         gConsPrint("SWITCH TRACK (LEFT/RIGHT)");
         gConsPrint("CHANGE LOOP MODE (START)");
-        gConsPrint("PALY(A) PAUSE(B) RESUME(C)");
+        gConsPrint("CHANGE LOOP OFFSET (UP/DOWN)");
+        gConsPrint("PLAY(A) PAUSE(B) RESUME(C)");
         u16 joy = sysJoyWait();
-
-        play_cmd = loop ? 0x1200 : 0x1100;
 
         if (joy == JOY_L && track > 1) {
             track--;
@@ -64,8 +69,18 @@ int main() {
             track++;
         }
 
+        if (joy == JOY_D && offset > 0) {
+            offset--;
+        }
+
+        if (joy == JOY_U && offset < 9999) {
+            offset++;
+        }
+
         if (joy == JOY_A) {
+            play_cmd = loop ? ((offset > 0) ? 0x1A00 : 0x1200) : 0x1100;
             *mcd_cmd = play_cmd | track;
+            *mcd_arg = offset;
             *mcd_cmd_ck = *mcd_cmd_ck + 1;
         }
 
