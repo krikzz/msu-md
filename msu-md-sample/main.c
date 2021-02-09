@@ -56,11 +56,12 @@ int main() {
         gAppendString(loop_offset == 0 ? "OFF" : "ON ");
 
         gSetXY(0, G_SCREEN_H - 7);
-        gConsPrint("LOOP OFFSET (DOWN)");
-        gConsPrint("SEEK DELAY (UP)");
+        
         gConsPrint("SWITCH TRACK (LEFT/RIGHT)");
         gConsPrint("CHANGE LOOP MODE (START)");
         gConsPrint("PALY(A) PAUSE(B) RESUME(C)");
+        gConsPrint("SEEK DELAY (UP)");
+        gConsPrint("LOOP OFFSET (DOWN)");
         u16 joy = sysJoyWait();
 
         play_cmd = loop ? (loop_offset ? 0x1A00 : 0x1200) : 0x1100;
