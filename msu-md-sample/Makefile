@@ -1,12 +1,13 @@
-GCC= e:/devtools/m68k-3.4.6/
-CC= $(GCC)bin/gcc
-OBJC= $(GCC)bin/objcopy
-ASMZ80= $(GCC)bin/asmz80
-BINTOC= $(GCC)bin/bintoc
-NM= $(GCC)bin/nm
-OUTPUT= msu-md-sample
-LIB=$(GCC)lib
-BIN= $(GCC)bin
+GCC=	e:/devtools/m68k-3.4.6/
+CC	=$(GCC)bin/gcc
+OBJC	=$(GCC)bin/objcopy
+ASMZ80	=$(GCC)bin/asmz80
+BINTOC	=$(GCC)bin/bintoc
+NM	=$(GCC)bin/nm
+OUTPUT	=msu-md-sample
+LIB	=$(GCC)lib
+BIN	=$(GCC)bin
+SIZE    =$(GCC)bin/size
 
 MAKEFLAGS= -j8
 
@@ -27,6 +28,8 @@ OFILES = $(OBJ:%.o=$(BDIR)/%.o)
 all: $(OBJ)
 	$(CC) -B$(BIN) -T rom.ld -nostdlib $(OFILES) $(LIB)/libgcc.a -o $(BDIR)/$(OUTPUT).elf
 	$(OBJC) --pad-to 0x10000 -O binary $(BDIR)/$(OUTPUT).elf $(OUTPUT).bin
+	@echo "Memory utilization:"
+	@$(SIZE) $(BDIR)/$(OUTPUT).elf
 
 
 %.o: %.c

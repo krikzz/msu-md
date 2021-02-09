@@ -9,7 +9,10 @@
 #include "sub.h"
 
 void memSet(void *dst, u8 val, u16 len);
-u8 msfToDec(u8 msf);
+u32 msfToDec(u32 val);
+u32 decToMsf(u32 val);
+u8 bcdToDec(u8 val);
+u8 decToBcd(u8 val);
 void cddCmdExec(u8 cmd, u32 arg);
 void cddCmdParse(u8 cmd, u32 arg);
 void cddInit();
@@ -56,10 +59,20 @@ void msu_drv() {
 
             case MAIN_CMD_PLAY:
             case MAIN_CMD_PLAYLP:
-                mstate.track = mcd->CMD_MAIN[MAIN_ARG] - 1;
-                cddCmdExec(CDD_CMD_PLAY, toc.track_addr[mstate.track]);
+            case MAIN_CMD_PLAYOF:
+                mstate.track = (mcd->CMD_MAIN[MAIN_ARG] - 1);
+                mstate.loop_offset = toc.track_addr[mstate.track]; //MSF in BCD format (Minute,Seconds,Frames)
+                cddCmdExec(CDD_CMD_PLAY, mstate.loop_offset);
                 mcd->CD_FADER = mstate.vol;
                 mstate.loop_mode = cmd;
+
+                if (cmd == MAIN_CMD_PLAYOF) {
+                    u32 offset = *(vu32 *) (&mcd->CMD_MAIN[MAIN_ARG32]); //number of sectors (decimal number)
+                    mstate.loop_mode = MAIN_CMD_PLAYLP;
+                    offset += msfToDec(mstate.loop_offset);
+                    mstate.loop_offset = decToMsf(offset);
+                }
+
                 break;
 
             case MAIN_CMD_PAUSE:
@@ -71,6 +84,10 @@ void msu_drv() {
             case MAIN_CMD_RESUME:
                 cddCmdExec(CDD_CMD_RESUME, 0);
                 mcd->CD_FADER = mstate.vol;
+                break;
+
+            case MAIN_CMD_NOSEEK:
+                cddCmdExec(CDD_CMD_NOP, 0x2A5500 | mcd->CMD_MAIN[MAIN_ARG]);
                 break;
         }
 
@@ -102,9 +119,33 @@ void memSet(void *dst, u8 val, u16 len) {
     while (len--)*ptr++ = val;
 }
 
-u8 msfToDec(u8 msf) {
+u32 msfToDec(u32 val) {
 
-    return (msf >> 4) * 10 + (msf & 15);
+    u8 min = bcdToDec(val >> 16);
+    u8 sec = bcdToDec(val >> 8);
+    u8 fra = bcdToDec(val);
+
+    return ((u32) min * 60 * 75) + ((u16) sec * 75) + fra;
+}
+
+u32 decToMsf(u32 val) {
+
+    u8 min = decToBcd(val / 75 / 60);
+    u8 sec = decToBcd(val / 75 % 60);
+    u8 fra = decToBcd(val % 75);
+
+    return ((u32) min << 16) | ((u16) sec << 8) | fra;
+}
+
+u8 bcdToDec(u8 val) {
+
+    return (val >> 4) * 10 + (val & 15);
+}
+
+u8 decToBcd(u8 val) {
+
+    if (val > 99)val %= 99;
+    return (val / 10 << 4) | val % 10;
 }
 
 //****************************************************************************** cdd control
@@ -140,7 +181,7 @@ void cddInit() {
     cddReadToc(TOC_TRNUM); //may be need timeout and retry here
 
     //get number of tracks
-    toc.tracks_num = msfToDec((cdd_sta.arg[2] << 4) | cdd_sta.arg[3]);
+    toc.tracks_num = bcdToDec((cdd_sta.arg[2] << 4) | cdd_sta.arg[3]);
 
 
     //get tracks address list (in MSF format)
@@ -151,7 +192,7 @@ void cddInit() {
         track_num = (track_num & 0xF00) == 0x900 ? track_num + 0x700 : track_num + 0x100;
     }
 
-    toc.total_len = cddReadToc(TOC_CDLEN);//total cd len
+    toc.total_len = cddReadToc(TOC_CDLEN); //total cd len
     toc.track_addr[i] = toc.total_len; //disk total len matches to end of last track
     cddCmdExec(CDD_CMD_TOC, TOC_ABS_POS);
 
@@ -273,7 +314,7 @@ void loopCtrl() {
     if (cur_addr >= track_end && cdd_cmd.cmd == CDD_CMD_NOP) {
 
         if (mstate.loop_mode == MAIN_CMD_PLAYLP) {
-            cddCmdExec(CDD_CMD_PLAY, toc.track_addr[mstate.track]);
+            cddCmdExec(CDD_CMD_PLAY, mstate.loop_offset);
         } else {
             cddCmdExec(CDD_CMD_PAUSE, 0);
         }

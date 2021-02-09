@@ -43,6 +43,7 @@
 
 #define MAIN_CMD        0x00
 #define MAIN_ARG        0x01
+#define MAIN_ARG32      0x02
 #define MAIN_CMD_CK     0x0F
 
 #define SUB_STAT        0x00
@@ -52,7 +53,8 @@
 #define MAIN_CMD_PAUSE  0x13    //pause
 #define MAIN_CMD_RESUME 0x14    //resume
 #define MAIN_CMD_VOL    0x15    //cdda volume
-
+#define MAIN_CMD_NOSEEK 0x16    //turn off seek tile emulation. 0=emu-on(default), 1=emu-off
+#define MAIN_CMD_PLAYOF 0x1A    //play cdda track and loop from specified sector offset
 
 #define SUB_STAT_READY  0x00
 #define SUB_STAT_INIT   0x01
@@ -102,6 +104,7 @@ typedef struct {
     vu8 irq_ctr;
     u8 track;
     u8 loop_mode;
+    u32 loop_offset;
 } McdState;
 
 typedef struct {

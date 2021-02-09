@@ -23,6 +23,13 @@ RESUME:		0x14 resume playback
 VOL:		0x15 set cdda volume
  arguments:	volume 0-255
 
+NOSEEK:		0x16 seek time emulation switch
+  arguments:	0-enulation on(default state), 1-emultion off(no seek delays)
+
+PLAYOF:		0x1A play cdda track and loop from specified sector offset
+ arguments:	#1 = decimal number of track (1-99)
+            	#2 = offset in sectors from the start of the track to apply when looping.
+
 -------------------------------------------- usage
 Include msu-drv.bin in your binary and call it as function for initialization. 
 Finction will return 0 if driver loaded succesfuly or 1 if MCD hardware not detected.
