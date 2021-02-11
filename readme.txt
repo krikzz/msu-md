@@ -1,5 +1,3 @@
-![msu logo](https://github.com/krikzz/msu-md/blob/master/msu.png)
-
 # msu-md
 MegaCD driver for msu-like interfacing with CD hardware
 
