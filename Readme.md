@@ -60,7 +60,7 @@ for MegaDrive/Genesis
 * Cyclone IV FPGA
 * 16MB PSRAM and 1MB SRAM memory
 * High quality 6-layers PCB with hard gold surface finish
-* Supported ROM formats: Genesis, 32X*, Mega-CD, Master System, NES*
+* Supported ROM formats: Genesis, 32X[1], Mega-CD, Master System, NES[2]
 * Ram cart for Mega-CD
 * CD bios swap function turns off region locks for Mega-CD games
 * Hardware MegaKey turns off region locks for Genesis games
@@ -79,7 +79,7 @@ for MegaDrive/Genesis
 * Battery voltage monitoring. Battery can be replaced in time if it runs dry
 * Game Genie cheats support
 
-*32X games require 32X addon to be attached.
-*NES core has limited compatibility. Refer to user manual for details.
-*NES core currently supported only for NTSC systems.
-*For Mega-SG "Zero lag" option should be turned off for NES games (accurate Genesis timings required).
+_[1] 32X games require 32X addon to be attached.<br>
+ [2] NES core has limited compatibility. Refer to user manual for details.<br>
+NES core currently supported only for NTSC systems.<br>
+For Mega-SG "Zero lag" option should be turned off for NES games (accurate Genesis timings required)._
