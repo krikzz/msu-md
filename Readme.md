@@ -1,4 +1,5 @@
 # msu-md
+![msu logo](https://github.com/krikzz/msu-md/blob/master/msu.png)
 ```
 _|    _|    █|_|      _|    _|    █|                    
 _|  _|    _|    _|    _|    _|  _|    _|_|_|_|  _|█|_|_|
