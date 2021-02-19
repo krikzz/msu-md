@@ -1,12 +1,6 @@
 # msu-md
 ![msu logo](https://github.com/krikzz/msu-md/blob/master/msu.png)
-```
-_|    _|    █|_|      _|    _|    █|                    
-_|  _|    _|    _|    _|    _|  _|    _|_|_|_|  _|█|_|_|
-_|█|      _|          _|    _|_|          _|        _|  
-_|  _|    _|          █|    _|  _|      █|        _|    
-_|    _|  _|          _|    _|    _|  _|_|_|_|  _|_|_|_|
-```
+
 ### MegaCD driver for msu-like interfacing with CD hardware
 for MegaDrive/Genesis
 
